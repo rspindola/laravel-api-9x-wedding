@@ -29,4 +29,5 @@ Route::name('confirmation.')->group(function () {
     */
     Route::prefix('confirmation')->group(base_path('routes/api/confirmation.php'));
     Route::prefix('godparents')->group(base_path('routes/api/godparents.php'));
+    Route::prefix('message')->group(base_path('routes/api/message.php'));
 });
