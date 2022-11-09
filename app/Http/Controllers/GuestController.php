@@ -2,85 +2,52 @@
 
 namespace App\Http\Controllers;
 
+use App\Contracts\GuestRepositoryInterface;
 use App\Http\Requests\StoreGuestRequest;
-use App\Http\Requests\UpdateGuestRequest;
-use App\Models\Guest;
+use App\Http\Resources\GuestResource;
+use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
 class GuestController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
+    private GuestRepositoryInterface $guestRepository;
+
+    public function __construct(GuestRepositoryInterface $guestRepository)
     {
-        //
+        $this->guestRepository = $guestRepository;
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
+    public function index(): JsonResource
     {
-        //
+        return GuestResource::collection($this->guestRepository->getAll());
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \App\Http\Requests\StoreGuestRequest  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(StoreGuestRequest $request)
+    public function store(StoreGuestRequest $request): JsonResource
     {
-        return Guest::create($request->all());
+        $data = $request->all();
+
+        return new GuestResource($this->guestRepository->store($data));
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Guest  $guest
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Guest $guest)
+    public function show(Request $request): JsonResource
     {
-        //
+        $orderId = $request->route('id');
+        return new GuestResource($this->guestRepository->getById($orderId));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Guest  $guest
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Guest $guest)
+    public function update(Request $request): JsonResource
     {
-        //
+        $orderId = $request->route('id');
+        $data = $request->all();
+        return new GuestResource($this->guestRepository->update($orderId, $data));
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \App\Http\Requests\UpdateGuestRequest  $request
-     * @param  \App\Models\Guest  $guest
-     * @return \Illuminate\Http\Response
-     */
-    public function update(UpdateGuestRequest $request, Guest $guest)
+    public function destroy(Request $request): JsonResponse
     {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Guest  $guest
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Guest $guest)
-    {
-        //
+        $orderId = $request->route('id');
+        $this->guestRepository->delete($orderId);
+        return response()->json(null, Response::HTTP_NO_CONTENT);
     }
 }

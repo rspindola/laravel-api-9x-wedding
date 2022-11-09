@@ -1,6 +1,5 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -30,4 +29,5 @@ Route::name('confirmation.')->group(function () {
     Route::prefix('confirmation')->group(base_path('routes/api/confirmation.php'));
     Route::prefix('godparents')->group(base_path('routes/api/godparents.php'));
     Route::prefix('message')->group(base_path('routes/api/message.php'));
+    Route::prefix('guest')->group(base_path('routes/api/guest.php'));
 });
